@@ -8,7 +8,6 @@
 		"eslint:recommended",
 		"plugin:react/recommended",
 		"plugin:@typescript-eslint/recommended",
-		"prettier",
 		"plugin:prettier/recommended"
 	],
 	"overrides": [],
@@ -22,6 +21,11 @@
 		"indent": ["error", "tab"],
 		"linebreak-style": ["error", "unix"],
 		"quotes": ["error", "single"],
-		"semi": ["error", "always"]
+		"semi": ["error", "always"],
+    "react/react-in-jsx-scope":"off",
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": "off",
+    "react/prop-types": "off",
+    "@typescript-eslint/no-empty-function": "off"
 	}
 }

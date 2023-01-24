@@ -1,3 +1,1 @@
-# About this
-
-boilerplate for typescript & react
+sample mui project

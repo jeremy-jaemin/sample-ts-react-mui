@@ -5,6 +5,7 @@ import { SampleJotai } from './pages/SampleJotai';
 import { SampleDialog } from './pages/SampleDialog';
 import { SampleTable } from './pages/SampleTable';
 import { SampleAsync } from './pages/SampleAsync';
+import { SampleReactQuery } from './pages/SampleReactQuery';
 
 function App() {
 	return (
@@ -15,6 +16,7 @@ function App() {
 				<Route path="/SampleDialog" element={<SampleDialog />}></Route>
 				<Route path="/SampleTable" element={<SampleTable />}></Route>
 				<Route path="/SampleAsync" element={<SampleAsync />}></Route>
+				<Route path="/SampleReactQuery" element={<SampleReactQuery />}></Route>
 			</Routes>
 		</div>
 	);

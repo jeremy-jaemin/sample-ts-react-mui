@@ -21,11 +21,12 @@ export const Home = () => {
 			<NavigateButton path="SampleDialog" />
 			<NavigateButton path="SampleTable" />
 			<NavigateButton path="SampleAsync" />
+			<NavigateButton path="SampleReactQuery" />
 			<Button onClick={handleTest1} variant="outlined">
-				Sample Test 1
+				Test 1
 			</Button>
 			<Button onClick={handleTest2} variant="outlined">
-				Sample Test 2
+				Test 2
 			</Button>
 		</Stack>
 	);

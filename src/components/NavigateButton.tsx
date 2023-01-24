@@ -10,7 +10,7 @@ export const NavigateButton: React.FC<{ path: string }> = ({ path }) => {
 				navigate(path);
 			}}
 		>
-			<Typography>{path === '/' ? '홈으로 가기' : `${path} 가기`}</Typography>
+			<Typography>{path === '/' ? '홈으로 가기' : `${path.replace('Sample', '')}`}</Typography>
 		</Button>
 	);
 };

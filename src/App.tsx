@@ -1,11 +1,11 @@
-import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { Home } from './pages/Home';
-import { SampleJotai } from './pages/SampleJotai';
-import { SampleDialog } from './pages/SampleDialog';
-import { SampleTable } from './pages/SampleTable';
 import { SampleAsync } from './pages/SampleAsync';
+import { SampleDialog } from './pages/SampleDialog';
+import { SampleJotai } from './pages/SampleJotai';
 import { SampleReactQuery } from './pages/SampleReactQuery';
+import { SampleTable } from './pages/SampleTable';
+import { SampleMQTT } from './pages/SampleMQTT';
 
 function App() {
 	return (
@@ -17,6 +17,7 @@ function App() {
 				<Route path="/SampleTable" element={<SampleTable />}></Route>
 				<Route path="/SampleAsync" element={<SampleAsync />}></Route>
 				<Route path="/SampleReactQuery" element={<SampleReactQuery />}></Route>
+				<Route path="/SampleMQTT" element={<SampleMQTT />}></Route>
 			</Routes>
 		</div>
 	);

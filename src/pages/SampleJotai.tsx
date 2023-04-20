@@ -1,4 +1,4 @@
-import { Button, Stack, Typography } from '@mui/material';
+import { Button, Paper, Stack, Typography } from '@mui/material';
 import { useAtom } from 'jotai';
 import { NavigateButton } from '../components/NavigateButton';
 import { numberAtom } from '../state/state';
@@ -10,13 +10,15 @@ export const SampleJotai = () => {
 	};
 
 	return (
-		<Stack direction="column" spacing={2} width={300}>
-			<Typography variant="h5">SampleJotai</Typography>
-			<Typography>{count}번 클릭됨!</Typography>
-			<Button onClick={handleClick} variant="outlined">
-				<Typography>증가시키기!</Typography>
-			</Button>
-			<NavigateButton path="/" />
-		</Stack>
+		<Paper elevation={5} sx={{ p: 2 }}>
+			<Stack direction="column" spacing={2} width={300}>
+				<Typography variant="h5">SampleJotai</Typography>
+				<Typography>{count}번 클릭됨!</Typography>
+				<Button onClick={handleClick} variant="outlined">
+					<Typography>증가시키기!</Typography>
+				</Button>
+				<NavigateButton path="/" />
+			</Stack>
+		</Paper>
 	);
 };

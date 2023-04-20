@@ -1,6 +1,16 @@
 import React, { useState } from 'react';
 
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Stack, TextField, Typography } from '@mui/material';
+import {
+	Button,
+	Dialog,
+	DialogActions,
+	DialogContent,
+	DialogTitle,
+	Paper,
+	Stack,
+	TextField,
+	Typography,
+} from '@mui/material';
 import { useAtom } from 'jotai';
 import { NavigateButton } from '../components/NavigateButton';
 import { objectAtom } from '../state/state';
@@ -8,7 +18,7 @@ import { objectAtom } from '../state/state';
 export const SampleDialog = () => {
 	const [open, setOpen] = useState(false);
 	return (
-		<>
+		<Paper elevation={5} sx={{ p: 2 }}>
 			<Dialog open={open}>
 				<DialogTitle>
 					<Typography>TEST</Typography>
@@ -27,6 +37,6 @@ export const SampleDialog = () => {
 				</Button>
 				<NavigateButton path="/" />
 			</Stack>
-		</>
+		</Paper>
 	);
 };

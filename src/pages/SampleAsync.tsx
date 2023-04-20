@@ -1,4 +1,4 @@
-import { Button, Stack, Typography } from '@mui/material';
+import { Button, Paper, Stack, Typography } from '@mui/material';
 import { NavigateButton } from '../components/NavigateButton';
 
 export const SampleAsync = () => {

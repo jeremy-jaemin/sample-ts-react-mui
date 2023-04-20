@@ -31,7 +31,7 @@ export const SampleTable = () => {
 	};
 
 	return (
-		<>
+		<Paper elevation={5} sx={{ p: 2 }}>
 			<TableContainer component={Paper}>
 				<Table sx={{ minWidth: 650 }} aria-label="simple table">
 					<TableHead>
@@ -60,6 +60,6 @@ export const SampleTable = () => {
 					</TableBody>
 				</Table>
 			</TableContainer>
-		</>
+		</Paper>
 	);
 };

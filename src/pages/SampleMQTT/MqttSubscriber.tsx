@@ -1,29 +1,24 @@
 import { Button, Paper, Slider, Stack, TextField, Typography, styled } from '@mui/material';
 import { useFormik } from 'formik';
-import { NavigateButton } from '../components/NavigateButton';
+import { NavigateButton } from '../../components/NavigateButton';
 import CellTowerIcon from '@mui/icons-material/CellTower';
 import WatchIcon from '@mui/icons-material/Watch';
 import mqtt, { MqttClient } from 'mqtt/dist/mqtt';
 import { useEffect } from 'react';
+import { MqttConnectType, MqttPublisherType, MqttStatusType, ReceiveMessageType } from './MqttType';
 
-// client.on('connect', () => {
-// 	client.subscribe([topic], () => {});
-// });
-
-// client.on('message', (topic, payload) => {
-// 	raw = payload.toString();
-// });
-
-export const SampleMQTT = () => {
-	return MqttHook();
-};
-
-type mqttStatusType = 'Disconnected' | 'Connecting' | 'Connected' | 'Reconnecting';
-
-const MqttHook = () => {
+export const MqttSubscriber = ({
+	config,
+	index,
+	maker,
+}: {
+	config: MqttConnectType;
+	index: number;
+	maker: MqttPublisherType;
+}) => {
 	const { handleSubmit, isSubmitting, values, setValues, errors } = useFormik<{
 		client?: MqttClient;
-		status: mqttStatusType;
+		status: MqttStatusType;
 		payload: object;
 		host: string;
 		port: number;
@@ -38,11 +33,11 @@ const MqttHook = () => {
 			client: undefined,
 			status: 'Disconnected',
 			payload: {},
-			host: '192.168.0.15',
-			port: 9001,
+			host: config.host,
+			port: config.port,
 			message: '',
-			topic: 'hihi',
-			target: '72646C110002',
+			topic: config.topic,
+			target: config.target,
 			// target: 'C3000001F8D3',
 			rssi: -100,
 			dist: 0,
@@ -61,7 +56,7 @@ const MqttHook = () => {
 		if (!values.client) return;
 		values.client.on('connect', () => {
 			values.client?.subscribe([values.topic], () => {});
-			setValues({ ...values, status: 'Connected' });
+			setValues({ ...values, status: 'Subscribing' });
 		});
 		values.client.on('error', (err) => {
 			setValues({ ...values, message: err.message });
@@ -71,19 +66,7 @@ const MqttHook = () => {
 			setValues({ ...values, status: 'Reconnecting' });
 		});
 		values.client.on('message', (topic, message) => {
-			// console.log(topic);
-			// console.log(message);
-
-			type ReceiveMessageType1 = {
-				v: number;
-				mid: number;
-				time: number;
-				ip: string;
-				mac: string;
-				rssi: number;
-				devices: [[]];
-			};
-			const parsed: ReceiveMessageType1 = JSON.parse(message.toString());
+			const parsed: ReceiveMessageType['RadioLand'] = JSON.parse(message.toString());
 			// console.log(parsed);
 			const beacon = parsed.devices.filter((value, index) => {
 				//@ts-ignore
@@ -100,7 +83,7 @@ const MqttHook = () => {
 
 			const payload = { topic, message: message.toString() };
 			// console.log(payload)
-			setValues({ ...values, status: 'Connected', message: payload.message });
+			setValues({ ...values, status: 'Subscribing', message: payload.message });
 		});
 	}, [values.client]);
 
@@ -111,12 +94,13 @@ const MqttHook = () => {
 		setValues({ ...values, dist: dist });
 		console.log(dist);
 	}, [values.rssi]);
+
 	// 2nd receiver
 	// useEffect(() => {
 	// 	if (!values.client) return;
 	// 	values.client.on('connect', () => {
 	// 		values.client?.subscribe([values.topic], () => {});
-	// 		setValues({ ...values, status: 'Connected' });
+	// 		setValues({ ...values, status: 'Subscribing' });
 	// 	});
 	// 	values.client.on('error', (err) => {
 	// 		setValues({ ...values, message: err.message });
@@ -129,11 +113,8 @@ const MqttHook = () => {
 	// 		// console.log(topic);
 	// 		// console.log(message);
 
-	// 		type ReceiveMessageType2 = {
-	// 			mac: string;
-	// 			rssi: number;
-	// 		};
-	// 		const parsed: ReceiveMessageType2[] = JSON.parse(message.toString());
+	//
+	// 		const parsed: ReceiveMessageType['Minew'] = JSON.parse(message.toString());
 
 	// 		console.log(parsed);
 	// 		const beacon = parsed.filter((value, index) => {
@@ -146,7 +127,7 @@ const MqttHook = () => {
 
 	// 		const payload = { topic, message: message.toString() };
 	// 		// console.log(payload)
-	// 		setValues({ ...values, status: 'Connected', message: payload.message });
+	// 		setValues({ ...values, status: 'Subscribing', message: payload.message });
 	// 	});
 	// }, [values.client]);
 
@@ -170,66 +151,72 @@ const MqttHook = () => {
 	};
 
 	return (
-		<Paper elevation={5} sx={{ p: 2, width: 300 }}>
-			<Stack direction="column" spacing={2} width={300}>
-				<Typography variant="h5">SampleMQTT</Typography>
-				<Stack direction="row" justifyContent="space-between" alignItems="center">
-					<Typography variant="subtitle1">Host : </Typography>
-					<StyledTextField
-						value={values.host}
-						onChange={(e) => {
-							setValues({ ...values, host: e.target.value });
-						}}
-					/>
-				</Stack>
-				<Stack direction="row" justifyContent="space-between" alignItems="center">
-					<Typography variant="subtitle1">Port : </Typography>
-					<StyledTextField
-						value={values.port}
-						onChange={(e) => {
-							setValues({ ...values, port: +e.target.value });
-						}}
-					/>
-				</Stack>
-				<Stack direction="row" justifyContent="space-between" alignItems="center">
-					<Typography variant="subtitle1">Status : </Typography>
-					<StyledTextField
-						value={values.status}
-						InputProps={{
-							sx: {
-								color: values.status === 'Connected' ? 'green' : values.status === 'Disconnected' ? 'red' : 'orange',
-							},
-						}}
-					/>
-				</Stack>
-				<Stack direction="row" justifyContent="space-between" alignItems="center">
-					<Typography variant="subtitle1">Message : </Typography>
-					<StyledTextField value={values.message} />
-				</Stack>
-				<Stack direction="row" justifyContent="space-between" alignItems="center">
-					<Typography variant="subtitle1">RSSI : </Typography>
-					<StyledTextField value={values.rssi} />
-				</Stack>
-				<Stack direction="row" justifyContent="space-between" alignItems="center">
-					<Typography variant="subtitle1">Distance : </Typography>
-					<StyledTextField value={values.dist} />
-				</Stack>
-				<Stack direction="row" justifyContent="space-between" alignItems="center" spacing={1}>
+		<Stack direction="column" spacing={2} width={300}>
+			<Typography variant="h5" align="center">{`Subscriber ${index + 1}`}</Typography>
+			<Stack direction="row" justifyContent="space-between" alignItems="center">
+				<Typography variant="subtitle1">Host : </Typography>
+				<StyledTextField
+					value={values.host}
+					onChange={(e) => {
+						setValues({ ...values, host: e.target.value });
+					}}
+				/>
+			</Stack>
+			<Stack direction="row" justifyContent="space-between" alignItems="center">
+				<Typography variant="subtitle1">Port : </Typography>
+				<StyledTextField
+					value={values.port}
+					onChange={(e) => {
+						setValues({ ...values, port: +e.target.value });
+					}}
+				/>
+			</Stack>
+			<Stack direction="row" justifyContent="space-between" alignItems="center">
+				<Typography variant="subtitle1">Topic : </Typography>
+				<StyledTextField
+					value={values.topic}
+					onChange={(e) => {
+						setValues({ ...values, topic: e.target.value });
+					}}
+				/>
+			</Stack>
+			<Stack direction="row" justifyContent="space-between" alignItems="center">
+				<Typography variant="subtitle1">Status : </Typography>
+				<StyledTextField
+					value={values.status}
+					InputProps={{
+						sx: {
+							color: values.status === 'Subscribing' ? 'green' : values.status === 'Disconnected' ? 'red' : 'orange',
+						},
+					}}
+				/>
+			</Stack>
+			<Stack direction="row" justifyContent="space-between" alignItems="center">
+				<Typography variant="subtitle1">Message : </Typography>
+				<StyledTextField value={values.message} />
+			</Stack>
+			<Stack direction="row" justifyContent="space-between" alignItems="center">
+				<Typography variant="subtitle1">RSSI : </Typography>
+				<StyledTextField value={values.rssi} />
+			</Stack>
+			<Stack direction="row" justifyContent="space-between" alignItems="center">
+				<Typography variant="subtitle1">Distance : </Typography>
+				<StyledTextField value={values.dist} />
+			</Stack>
+			{/* <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={1}>
 					<CellTowerIcon sx={{ mr: 1 }} />
 					<Slider aria-label="Default" value={-values.rssi} />
 					<WatchIcon />
-				</Stack>
-				<Stack direction="row" justifyContent="space-around" spacing={2}>
-					<Button variant="contained" onClick={mqttConnect} fullWidth disabled={values.status !== 'Disconnected'}>
-						<Typography>연결</Typography>
-					</Button>
-					<Button variant="contained" onClick={mqttDisconnect} fullWidth disabled={values.status !== 'Connected'}>
-						<Typography>해제</Typography>
-					</Button>
-				</Stack>
-				<NavigateButton path="/" />
+				</Stack> */}
+			<Stack direction="row" justifyContent="space-around" spacing={2}>
+				<Button variant="contained" onClick={mqttConnect} fullWidth disabled={values.status !== 'Disconnected'}>
+					<Typography>연결</Typography>
+				</Button>
+				<Button variant="contained" onClick={mqttDisconnect} fullWidth disabled={values.status !== 'Subscribing'}>
+					<Typography>해제</Typography>
+				</Button>
 			</Stack>
-		</Paper>
+		</Stack>
 	);
 };
 

@@ -32,6 +32,7 @@ const MqttHook = () => {
 		subtmit?: string;
 		target: string;
 		rssi: number;
+		dist: number;
 	}>({
 		initialValues: {
 			client: undefined,
@@ -42,7 +43,9 @@ const MqttHook = () => {
 			message: '',
 			topic: 'hihi',
 			target: '72646C110002',
-			rssi: 0,
+			// target: 'C3000001F8D3',
+			rssi: -100,
+			dist: 0,
 		},
 		onSubmit: async (values, { setErrors, resetForm }) => {
 			try {
@@ -68,7 +71,10 @@ const MqttHook = () => {
 			setValues({ ...values, status: 'Reconnecting' });
 		});
 		values.client.on('message', (topic, message) => {
-			type ReceiveMessageType = {
+			// console.log(topic);
+			// console.log(message);
+
+			type ReceiveMessageType1 = {
 				v: number;
 				mid: number;
 				time: number;
@@ -77,22 +83,72 @@ const MqttHook = () => {
 				rssi: number;
 				devices: [[]];
 			};
-
-			const parsed: ReceiveMessageType = JSON.parse(message.toString());
-
+			const parsed: ReceiveMessageType1 = JSON.parse(message.toString());
+			// console.log(parsed);
 			const beacon = parsed.devices.filter((value, index) => {
 				//@ts-ignore
 				return values.target === value[1];
 			});
 
-			//@ts-ignore
-			if (beacon.length) values.rssi = beacon[0][2];
+			if (beacon.length) {
+				// console.log('found ' + beacon.length + ' devices');
+				// console.log(beacon[0][2]);
+				//@ts-ignore
+				values.rssi = beacon[0][2];
+				// console.log(values.rssi);
+			}
 
 			const payload = { topic, message: message.toString() };
 			// console.log(payload)
 			setValues({ ...values, status: 'Connected', message: payload.message });
 		});
 	}, [values.client]);
+
+	useEffect(() => {
+		const measuredPower = -69;
+		const n = 2;
+		const dist = Math.pow(10, (measuredPower - values.rssi) / Math.pow(10, n));
+		setValues({ ...values, dist: dist });
+		console.log(dist);
+	}, [values.rssi]);
+	// 2nd receiver
+	// useEffect(() => {
+	// 	if (!values.client) return;
+	// 	values.client.on('connect', () => {
+	// 		values.client?.subscribe([values.topic], () => {});
+	// 		setValues({ ...values, status: 'Connected' });
+	// 	});
+	// 	values.client.on('error', (err) => {
+	// 		setValues({ ...values, message: err.message });
+	// 		values.client?.end(true);
+	// 	});
+	// 	values.client.on('reconnect', () => {
+	// 		setValues({ ...values, status: 'Reconnecting' });
+	// 	});
+	// 	values.client.on('message', (topic, message) => {
+	// 		// console.log(topic);
+	// 		// console.log(message);
+
+	// 		type ReceiveMessageType2 = {
+	// 			mac: string;
+	// 			rssi: number;
+	// 		};
+	// 		const parsed: ReceiveMessageType2[] = JSON.parse(message.toString());
+
+	// 		console.log(parsed);
+	// 		const beacon = parsed.filter((value, index) => {
+	// 			//@ts-ignore
+	// 			return values.target === value.mac;
+	// 		});
+
+	// 		//@ts-ignore
+	// 		if (beacon.length) values.rssi = beacon[0].rssi;
+
+	// 		const payload = { topic, message: message.toString() };
+	// 		// console.log(payload)
+	// 		setValues({ ...values, status: 'Connected', message: payload.message });
+	// 	});
+	// }, [values.client]);
 
 	const mqttConnect = () => {
 		setValues({
@@ -145,7 +201,6 @@ const MqttHook = () => {
 							},
 						}}
 					/>
-					#
 				</Stack>
 				<Stack direction="row" justifyContent="space-between" alignItems="center">
 					<Typography variant="subtitle1">Message : </Typography>
@@ -154,6 +209,10 @@ const MqttHook = () => {
 				<Stack direction="row" justifyContent="space-between" alignItems="center">
 					<Typography variant="subtitle1">RSSI : </Typography>
 					<StyledTextField value={values.rssi} />
+				</Stack>
+				<Stack direction="row" justifyContent="space-between" alignItems="center">
+					<Typography variant="subtitle1">Distance : </Typography>
+					<StyledTextField value={values.dist} />
 				</Stack>
 				<Stack direction="row" justifyContent="space-between" alignItems="center" spacing={1}>
 					<CellTowerIcon sx={{ mr: 1 }} />

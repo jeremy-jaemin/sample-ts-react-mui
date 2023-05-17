@@ -18,7 +18,7 @@ import { objectAtom } from '../state/state';
 export const SampleDialog = () => {
 	const [open, setOpen] = useState(false);
 	return (
-		<Paper elevation={5} sx={{ p: 2 }}>
+		<Paper elevation={5} sx={{ p: 2, width: 300 }}>
 			<Dialog open={open}>
 				<DialogTitle>
 					<Typography>TEST</Typography>

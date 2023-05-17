@@ -17,7 +17,7 @@ export const Home = () => {
 	const handleTest2 = () => {};
 
 	return (
-		<Paper elevation={5} sx={{ p: 2 }}>
+		<Paper elevation={5} sx={{ p: 2, width: 300 }}>
 			<Stack direction="column" spacing={1} width={300}>
 				<Typography variant="h5">Home Page</Typography>
 				<Typography>Atom : {numClick}번 클릭!</Typography>
@@ -27,6 +27,7 @@ export const Home = () => {
 				<NavigateButton path="SampleAsync" />
 				<NavigateButton path="SampleReactQuery" />
 				<NavigateButton path="SampleMQTT" />
+				<NavigateButton path="SampleReactPrinter" />
 				<Button onClick={handleTest1} variant="outlined">
 					Test 1
 				</Button>

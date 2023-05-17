@@ -1,6 +1,15 @@
 export type MqttStatusType = 'Disconnected' | 'Connecting' | 'Subscribing' | 'Reconnecting';
 export type MqttConnectType = { host: string; port: number; topic: string; target: string };
 export type MqttPublisherType = 'RadioLand' | 'Minew';
+export type MinewHeaderType = {
+	gatewayFree: number;
+	gatewayLoad: number;
+	mac: string;
+	timestamp: Date;
+	type: string;
+};
+export type MinewBodyType = { mac: string; rssi: number };
+
 export type ReceiveMessageType = {
 	RadioLand: {
 		v: number;
@@ -11,8 +20,5 @@ export type ReceiveMessageType = {
 		rssi: number;
 		devices: [[]];
 	};
-	Minew: {
-		mac: string;
-		rssi: number;
-	};
+	Minew: any[];
 };

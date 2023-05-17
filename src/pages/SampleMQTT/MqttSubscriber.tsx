@@ -5,16 +5,27 @@ import CellTowerIcon from '@mui/icons-material/CellTower';
 import WatchIcon from '@mui/icons-material/Watch';
 import mqtt, { MqttClient } from 'mqtt/dist/mqtt';
 import { useEffect } from 'react';
-import { MqttConnectType, MqttPublisherType, MqttStatusType, ReceiveMessageType } from './MqttType';
+import {
+	MinewBodyType,
+	MinewHeaderType,
+	MqttConnectType,
+	MqttPublisherType,
+	MqttStatusType,
+	ReceiveMessageType,
+} from './MqttType';
 
 export const MqttSubscriber = ({
 	config,
 	index,
 	maker,
+	rssi,
+	setRssi,
 }: {
 	config: MqttConnectType;
 	index: number;
 	maker: MqttPublisherType;
+	rssi: number[];
+	setRssi: React.Dispatch<React.SetStateAction<number[]>>;
 }) => {
 	const { handleSubmit, isSubmitting, values, setValues, errors } = useFormik<{
 		client?: MqttClient;
@@ -66,24 +77,53 @@ export const MqttSubscriber = ({
 			setValues({ ...values, status: 'Reconnecting' });
 		});
 		values.client.on('message', (topic, message) => {
-			const parsed: ReceiveMessageType['RadioLand'] = JSON.parse(message.toString());
-			// console.log(parsed);
-			const beacon = parsed.devices.filter((value, index) => {
-				//@ts-ignore
-				return values.target === value[1];
-			});
+			switch (maker) {
+				case 'RadioLand': {
+					const parsed: ReceiveMessageType['RadioLand'] = JSON.parse(message.toString());
 
-			if (beacon.length) {
-				// console.log('found ' + beacon.length + ' devices');
-				// console.log(beacon[0][2]);
-				//@ts-ignore
-				values.rssi = beacon[0][2];
-				// console.log(values.rssi);
+					if (!parsed.devices) {
+						values.rssi = -100;
+						return;
+					}
+
+					const beacon = parsed.devices.filter((value, index) => {
+						//@ts-ignore
+						return values.target === value[1];
+					});
+
+					if (beacon && beacon.length) {
+						//@ts-ignore
+						values.rssi = beacon[0][2];
+					}
+
+					const payload = { topic, message: message.toString() };
+					setValues({ ...values, status: 'Subscribing', message: payload.message });
+					break;
+				}
+				case 'Minew': {
+					const parsed: ReceiveMessageType['Minew'] = JSON.parse(message.toString());
+
+					if (!parsed.length) {
+						values.rssi = -100;
+						return;
+					}
+
+					const header: MinewHeaderType = parsed[0];
+					const body: MinewBodyType[] = parsed.slice(1);
+
+					const beacon = body.filter((value, index) => {
+						//@ts-ignore
+						return values.target === value.mac;
+					});
+
+					//@ts-ignore
+					if (beacon.length) values.rssi = beacon[0].rssi;
+
+					const payload = { topic, message: message.toString() };
+					setValues({ ...values, status: 'Subscribing', message: payload.message });
+					break;
+				}
 			}
-
-			const payload = { topic, message: message.toString() };
-			// console.log(payload)
-			setValues({ ...values, status: 'Subscribing', message: payload.message });
 		});
 	}, [values.client]);
 
@@ -92,44 +132,11 @@ export const MqttSubscriber = ({
 		const n = 2;
 		const dist = Math.pow(10, (measuredPower - values.rssi) / Math.pow(10, n));
 		setValues({ ...values, dist: dist });
-		console.log(dist);
+
+		const test = rssi;
+		test.splice(index, 1, values.rssi);
+		setRssi([...test]);
 	}, [values.rssi]);
-
-	// 2nd receiver
-	// useEffect(() => {
-	// 	if (!values.client) return;
-	// 	values.client.on('connect', () => {
-	// 		values.client?.subscribe([values.topic], () => {});
-	// 		setValues({ ...values, status: 'Subscribing' });
-	// 	});
-	// 	values.client.on('error', (err) => {
-	// 		setValues({ ...values, message: err.message });
-	// 		values.client?.end(true);
-	// 	});
-	// 	values.client.on('reconnect', () => {
-	// 		setValues({ ...values, status: 'Reconnecting' });
-	// 	});
-	// 	values.client.on('message', (topic, message) => {
-	// 		// console.log(topic);
-	// 		// console.log(message);
-
-	//
-	// 		const parsed: ReceiveMessageType['Minew'] = JSON.parse(message.toString());
-
-	// 		console.log(parsed);
-	// 		const beacon = parsed.filter((value, index) => {
-	// 			//@ts-ignore
-	// 			return values.target === value.mac;
-	// 		});
-
-	// 		//@ts-ignore
-	// 		if (beacon.length) values.rssi = beacon[0].rssi;
-
-	// 		const payload = { topic, message: message.toString() };
-	// 		// console.log(payload)
-	// 		setValues({ ...values, status: 'Subscribing', message: payload.message });
-	// 	});
-	// }, [values.client]);
 
 	const mqttConnect = () => {
 		setValues({

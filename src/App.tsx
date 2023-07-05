@@ -6,7 +6,7 @@ import { SampleJotai } from './pages/SampleJotai';
 import { SampleReactQuery } from './pages/SampleReactQuery';
 import { SampleTable } from './pages/SampleTable';
 import { SampleMQTT } from './pages/SampleMQTT';
-import { SampleReactPrinter } from './pages/SampleReactPrinter';
+import { SampleJSPrinter } from './pages/SampleJSPrinter';
 
 function App() {
 	return (
@@ -19,7 +19,7 @@ function App() {
 				<Route path="/SampleAsync" element={<SampleAsync />}></Route>
 				<Route path="/SampleReactQuery" element={<SampleReactQuery />}></Route>
 				<Route path="/SampleMQTT" element={<SampleMQTT />}></Route>
-				<Route path="/SampleReactPrinter" element={<SampleReactPrinter />}></Route>
+				<Route path="/SampleJSPrinter" element={<SampleJSPrinter />}></Route>
 			</Routes>
 		</div>
 	);

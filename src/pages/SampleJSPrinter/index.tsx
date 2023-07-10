@@ -6,7 +6,7 @@ import { useFormik } from 'formik';
 type MethodType = 'USB' | 'SERIAL' | 'NETWORK';
 type ActionType = 'CONNECT' | 'DISCONNECT' | 'PRINT';
 type StatusType = 'NOTCONNECTED' | 'CONNECTING' | 'CONNECTED' | 'ERROR';
-type SubmitType = { name?: string; vid?: string; pid?: string; ip?: string; port?: string };
+type SubmitType = { name?: string; vid?: number; pid?: number; ip?: string; port?: string };
 
 export const SampleJSPrinter = () => {
 	const { handleSubmit, isSubmitting, isValid, values, setValues, errors } = useFormik<{
@@ -18,7 +18,7 @@ export const SampleJSPrinter = () => {
 		initialValues: {
 			method: 'USB',
 			action: 'CONNECT',
-			submit: {},
+			submit: { name: 'ReceiptPrinter1', vid: 0x1504, pid: 0x006e },
 			status: 'NOTCONNECTED',
 		},
 		// validateOnMount: true,
@@ -68,7 +68,7 @@ export const SampleJSPrinter = () => {
 							<Stack direction="row" justifyContent="space-between" alignItems="center">
 								<Typography variant="subtitle1">NAME : </Typography>
 								<StyledTextField
-									onChange={(e) => {
+									onChange={(e: any) => {
 										setValues({ ...values, submit: { ...values.submit, name: e.target.value } });
 									}}
 								/>
@@ -76,16 +76,16 @@ export const SampleJSPrinter = () => {
 							<Stack direction="row" justifyContent="space-between" alignItems="center">
 								<Typography variant="subtitle1">VID : </Typography>
 								<StyledTextField
-									onChange={(e) => {
-										setValues({ ...values, submit: { ...values.submit, vid: e.target.value } });
+									onChange={(e: any) => {
+										setValues({ ...values, submit: { ...values.submit, vid: +e.target.value } });
 									}}
 								/>
 							</Stack>
 							<Stack direction="row" justifyContent="space-between" alignItems="center">
 								<Typography variant="subtitle1">PID : </Typography>
 								<StyledTextField
-									onChange={(e) => {
-										setValues({ ...values, submit: { ...values.submit, pid: e.target.value } });
+									onChange={(e: any) => {
+										setValues({ ...values, submit: { ...values.submit, pid: +e.target.value } });
 									}}
 								/>
 							</Stack>
@@ -96,7 +96,7 @@ export const SampleJSPrinter = () => {
 							<Stack direction="row" justifyContent="space-between" alignItems="center">
 								<Typography variant="subtitle1">NAME : </Typography>
 								<StyledTextField
-									onChange={(e) => {
+									onChange={(e: any) => {
 										setValues({ ...values, submit: { ...values.submit, name: e.target.value } });
 									}}
 								/>
@@ -104,7 +104,7 @@ export const SampleJSPrinter = () => {
 							<Stack direction="row" justifyContent="space-between" alignItems="center">
 								<Typography variant="subtitle1">PORT : </Typography>
 								<StyledTextField
-									onChange={(e) => {
+									onChange={(e: any) => {
 										setValues({ ...values, submit: { ...values.submit, port: e.target.value } });
 									}}
 								/>
@@ -116,7 +116,7 @@ export const SampleJSPrinter = () => {
 							<Stack direction="row" justifyContent="space-between" alignItems="center">
 								<Typography variant="subtitle1">NAME : </Typography>
 								<StyledTextField
-									onChange={(e) => {
+									onChange={(e: any) => {
 										setValues({ ...values, submit: { ...values.submit, name: e.target.value } });
 									}}
 								/>
@@ -124,7 +124,7 @@ export const SampleJSPrinter = () => {
 							<Stack direction="row" justifyContent="space-between" alignItems="center">
 								<Typography variant="subtitle1">IP : </Typography>
 								<StyledTextField
-									onChange={(e) => {
+									onChange={(e: any) => {
 										setValues({ ...values, submit: { ...values.submit, ip: e.target.value } });
 									}}
 								/>
@@ -132,7 +132,7 @@ export const SampleJSPrinter = () => {
 							<Stack direction="row" justifyContent="space-between" alignItems="center">
 								<Typography variant="subtitle1">PORT :</Typography>
 								<StyledTextField
-									onChange={(e) => {
+									onChange={(e: any) => {
 										setValues({ ...values, submit: { ...values.submit, port: e.target.value } });
 									}}
 								/>

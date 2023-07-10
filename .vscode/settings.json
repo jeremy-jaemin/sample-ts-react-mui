@@ -1,0 +1,13 @@
+{
+	"editor.defaultFormatter": "esbenp.prettier-vscode",
+	"editor.indentSize": "tabSize",
+	"editor.codeActionsOnSave": {
+		"source.fixAll": true,
+		"source.organizeImports": false
+	},
+	"editor.formatOnSave": true,
+	"editor.wordWrap": "on",
+	"editor.linkedEditing": true,
+	"editor.tabSize": 2,
+	"editor.detectIndentation": false
+}

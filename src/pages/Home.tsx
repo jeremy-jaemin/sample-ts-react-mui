@@ -14,7 +14,21 @@ export const Home = () => {
 		test2 && console.log('undefined');
 		!test2 && console.log('defined');
 	};
-	const handleTest2 = () => {};
+
+	const asyncTest = async () => {
+		console.log('1');
+		return new Promise((resolve) => {
+			console.log('2');
+			setTimeout(resolve, 2000);
+		});
+		// await setTimeout(() => {
+		// 	console.log('2');
+		// }, 100);
+	};
+	const handleTest2 = async () => {
+		await asyncTest();
+		console.log('3');
+	};
 
 	return (
 		<Paper elevation={5} sx={{ p: 2, width: 300 }}>

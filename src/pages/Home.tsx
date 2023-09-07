@@ -42,6 +42,7 @@ export const Home = () => {
 				<NavigateButton path="SampleReactQuery" />
 				<NavigateButton path="SampleMQTT" />
 				<NavigateButton path="SampleJSPrinter" />
+				<NavigateButton path="SampleAlcohol" />
 				<Button onClick={handleTest1} variant="outlined">
 					Test 1
 				</Button>
